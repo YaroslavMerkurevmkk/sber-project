@@ -1,0 +1,22 @@
+import json
+from pathlib import Path
+from typing import Any
+
+
+class Config:
+    def __init__(self, filepath: Path):
+        self._config = self._load_config(filepath)
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self._config.get(key, default)
+
+    @staticmethod
+    def _load_config(filepath: Path) -> dict:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            return json.load(f)
+
+    def __getitem__(self, key: str) -> Any:
+        return self._config[key]
+
+
+GlobalConfig = Config(Path("config/config.json"))
