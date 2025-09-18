@@ -38,5 +38,5 @@ class Agent(Chat):
 
     def invoke(self, message, thread_id: str):
         return self.agent.invoke(
-            message, config={"configurable": {"thread_id": thread_id}}
+            {"messages": [message]}, config={"configurable": {"thread_id": thread_id}}
         )
