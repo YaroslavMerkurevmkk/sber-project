@@ -48,7 +48,6 @@ TEMPLATES = [
     },
 ]
 
-#  WSGI_APPLICATION = 'web.wsgi.application'
 ASGI_APPLICATION = 'web.asgi.application'
 
 CHANNEL_LAYERS = {
@@ -77,6 +76,8 @@ elif _db_backend == 'sqlite3' or _db_backend == 'sqlite':
     }
 else:
     exit(f"DB backend {_db_backend} is not supported")
+
+DATABASES = {'default': default_db}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
