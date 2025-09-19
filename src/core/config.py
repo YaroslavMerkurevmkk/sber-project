@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 from typing import Any
 
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
 
 class Config:
     def __init__(self, filepath: Path):
@@ -19,4 +21,4 @@ class Config:
         return self._config[key]
 
 
-GlobalConfig = Config(Path("config/config.json"))
+GlobalConfig = Config(BASE_DIR / "config/config.json")

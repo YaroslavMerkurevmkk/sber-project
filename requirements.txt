@@ -1,3 +1,6 @@
 langchain-gigachat~=0.3.12
 langgraph~=0.6.7
 langchain-community~=0.3.29
+django~=5.2.6
+channels~=4.3.1
+uvicorn[standard]~=0.35

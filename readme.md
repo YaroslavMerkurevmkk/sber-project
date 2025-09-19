@@ -18,8 +18,23 @@ pip install -U pip && pip install -r requirements.txt
 Create directory `config` and file `config/config.json`
 ```json
 {
-    "token": "GigaChat token"
+  "token": "Giga Chat token",
+  "secret_key": "",
+  "allowed_hosts": [],
+  "db_backend": "sqlite3",
+  "db_host": "localhost",
+  "db_name": "config/db.sqlite3",
+  "db_port": 3306,
+  "db_user": "sber_admin",
+  "db_password": "parol"
 }
+```
+
+### Configure Django
+```bash
+python src/manage.py migrate
+python src/manage.py createsuperuser
+unicorn web.asgi:application --reload --port 8000
 ```
 
 ### Start on linux
