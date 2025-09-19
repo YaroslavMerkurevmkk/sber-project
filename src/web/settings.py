@@ -62,7 +62,7 @@ if _db_backend == 'mysql':
         exit(f"Please provide sufficient MySQL connection params (user/password)")
 
     default_db = {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'mysql.connector.django',
         'HOST': GlobalConfig.get('db_host', 'localhost'),
         'PORT': GlobalConfig.get('db_port', '3306'),
         'NAME': GlobalConfig['db_name'],
