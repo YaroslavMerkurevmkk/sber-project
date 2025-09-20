@@ -3,3 +3,4 @@ venv
 .idea
 config
 __pycache__
+staticfiles

@@ -1,3 +1,13 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Chat, Message
+
+
+@admin.register(Chat)
+class ChatAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "user")
+
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    list_display = ("id", "chat")

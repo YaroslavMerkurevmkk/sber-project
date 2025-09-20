@@ -1,8 +1,13 @@
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
+
+import front.views
 
 
 urlpatterns = [
-    path('chat/', include('front.urls')),
+    path("", front.views.index, name="chat_home"),
+    path("register/", front.views.register_view, name="register"),
+    path("login/", front.views.login_view, name="login"),
+    path("logout/", front.views.logout_view, name="logout"),
     path('admin/', admin.site.urls),
 ]

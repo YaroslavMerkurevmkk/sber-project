@@ -1,0 +1,24 @@
+{% extends "front/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<h2>Ваши чаты</h2>
+<div id="chats"></div>
+<script>
+const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    if (data.type === "init") {
+        const chatsDiv = document.getElementById("chats");
+        data.chats.forEach(chat => {
+            const el = document.createElement("div");
+            el.textContent = `Chat: ${chat.name} (ID: ${chat.id})`;
+            chatsDiv.appendChild(el);
+        });
+    }
+};
+</script>
+
+{% endblock %}
