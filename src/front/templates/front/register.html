@@ -3,12 +3,21 @@
 
 {% block content %}
 
-<h2>Регистрация</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Зарегистрироваться</button>
-</form>
-<p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+<script>
+    Swal.fire({
+    title: 'Регистрация',
+    html: `
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+       <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
+    `,
+    showConfirmButton: false,
+    allowOutsideClick: false,
+    allowEscapeKey: false
+    });
+</script>
 
 {% endblock %}

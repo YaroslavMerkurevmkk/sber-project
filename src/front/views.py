@@ -11,6 +11,9 @@ def index(request):
 
 
 def register_view(request):
+    if request.user.is_authenticated:
+        return redirect("chat")
+
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -18,19 +21,22 @@ def register_view(request):
             user.set_password(form.cleaned_data["password"])
             user.save()
             login(request, user)
-            return redirect("chat_home")
+            return redirect("chat")
     else:
         form = RegisterForm()
     return render(request, "front/register.html", {"title": "Register", "form": form})
 
 
 def login_view(request):
+    if request.user.is_authenticated:
+        return redirect("chat")
+
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
             user = form.cleaned_data["user"]
             login(request, user)
-            return redirect("chat_home")
+            return redirect("chat")
     else:
         form = LoginForm()
     return render(request, "front/login.html", {"title": "Login", "form": form})
