@@ -3,14 +3,17 @@ from __future__ import annotations
 from typing import Any
 
 from asgiref.sync import sync_to_async
+from django.contrib.auth import get_user_model
 
-from front.models import Chat
+from front.models import Chat, Message, MessageAuthor
+
+User = get_user_model()
 
 
 class DatabaseApi:
 
     @staticmethod
-    async def get_user_chats(user) -> list[dict[str, Any]]:
+    async def get_user_chats(user: User) -> list[dict[str, Any]]:
         result = await sync_to_async(
             lambda: [chat.base_info for chat in Chat.objects.filter(user=user).order_by("-id")]
         )()
@@ -35,3 +38,31 @@ class DatabaseApi:
 
         result = await sync_to_async(lambda: [dict(msg) for msg in reversed(qs)])()
         return result
+
+    @staticmethod
+    async def create_chat(user: User, name: str) -> None:
+        await sync_to_async(Chat(user=user, name=name).save)()
+
+    @staticmethod
+    async def rename_chat(user: User, chat_id: int, name: str) -> None:
+        try:
+            chat = await sync_to_async(Chat.objects.filter(user=user, id=chat_id).first)()
+            chat.name = name
+            await sync_to_async(chat.save)()
+
+        except Chat.DoesNotExist:
+            raise ValueError("Chat not found!")
+
+    @staticmethod
+    async def create_message(user: User,
+                             chat_id: int,
+                             content: str,
+                             author: MessageAuthor,
+                             links: str = None) -> None:
+        try:
+            chat = await sync_to_async(Chat.objects.filter(user=user, id=chat_id).first)()
+        except Chat.DoesNotExist:
+            raise ValueError("Chat not found!")
+
+        await sync_to_async(Message(content=content, author=author.value,
+                                    links=links, chat=chat).save)()

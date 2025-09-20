@@ -8,10 +8,20 @@ from typing import Any
 class MT(Enum):
     Command = "command"
     Data = "data"
+    Notification = "notification"
 
 
 class CA(Enum):
     CreateChat = "create_chat"
+    CreateMessage = "create_message"
+
+
+class AlertType(Enum):
+    Success = "success"
+    Warning = "warning"
+    Info = "info"
+    Question = "question"
+    Error = "error"
 
 
 class Command:
@@ -30,8 +40,8 @@ class Command:
         for key, value in self._data.items():
             yield key, value
 
-    def __getitem__(self, item: str, default: Any):
-        return self._data.get(item, default)
+    def __getitem__(self, item: str):
+        return self._data[item]
 
 
 class WsMessage:
@@ -61,10 +71,8 @@ class WsMessage:
     @staticmethod
     def from_dict(data: dict[str, Any]) -> WsMessage:
         mt = MT(data["type"])
-        del data["type"]
-        return WsMessage(mt, data)
+        return WsMessage(mt, data["payload"])
 
     @staticmethod
     def from_command(command: Command) -> WsMessage:
         return WsMessage(MT.Command, dict(command))
-
