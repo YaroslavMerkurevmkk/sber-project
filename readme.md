@@ -34,6 +34,7 @@ Create directory `config` and file `config/config.json`
 ```bash
 python src/manage.py migrate
 python src/manage.py createsuperuser
+python src/manage.py collectstatic
 unicorn web.asgi:application --reload --port 8000
 ```
 
