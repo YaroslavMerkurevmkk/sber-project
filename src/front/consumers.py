@@ -2,7 +2,7 @@ import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-from core.models import WsMessage, MT, Command, CT
+from core.models import WsMessage, MT, Command, CA
 from core.db import DatabaseApi
 
 
@@ -17,13 +17,14 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         chats = await DatabaseApi.get_user_chats(user)
-        await self.send(text_data=json.dumps({"type": CT.Init.value, "chats":  chats}))
+        await self.send(text_data=WsMessage(MT.Data, payload={"chats": chats}).to_text_data)
 
     async def disconnect(self, close_code):
         pass
 
     async def receive(self, text_data: str = None, bytes_data: bytes = None) -> None:
-        message = WsMessage(text_data)
+        json_data = json.loads(text_data)
+        message = WsMessage.from_dict(json_data)
         if message.m_type == MT.Command:
             await self._process_command(Command(message.payload))
             return
@@ -43,5 +44,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def _process_command(self, command: Command) -> None:
-        if Command.type == CT.Init:
+        if Command.action == CA.CreateChat:
             user = self.scope["user"]

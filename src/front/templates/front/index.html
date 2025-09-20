@@ -10,9 +10,11 @@ const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
 
 chatSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
-    if (data.type === "init") {
+    console.log(data);
+    if (data.type === "data" && data.payload && "chats" in data.payload) {
+
         const chatsDiv = document.getElementById("chats");
-        data.chats.forEach(chat => {
+        data.payload.chats.forEach(chat => {
             const el = document.createElement("div");
             el.textContent = `Chat: ${chat.name} (ID: ${chat.id})`;
             chatsDiv.appendChild(el);
