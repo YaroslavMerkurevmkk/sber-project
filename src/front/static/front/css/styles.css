@@ -1,0 +1,245 @@
+body {
+    font-family: SBSans, Arial, Helvetica, sans-serif;
+    color: var(--main-color);
+    font-weight: 100;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--main-background-color);
+    width: 100%;
+    height: 100vh;
+}
+
+.main-wrapper {
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+/*                HAT                */
+
+.hat-wrapper {
+    height: 60px;
+    padding: 10px;
+    box-shadow: 3px 3px 10px black;
+    background-color: var(--hat-color);
+}
+
+.hat {
+    height: 100%;
+    font-size: 20px;
+    font-weight: 700;
+    align-items: center;
+}
+
+.logo-container {
+    height: 100%;
+    min-width: 250px;
+    padding: 0 0 0 10px;
+    cursor: default;
+}
+
+#chatname {
+    font-size: 35px;
+    flex: 1;
+}
+
+#exit-button {
+    width: 90px;
+    height: 100%;
+    transition: 200ms all;
+    background-color: var(--button-background-color);
+    box-shadow: 3px 3px 5px #0c0c0c;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#exit-button:hover {
+    background-color: var(--selected-exit-color);
+}
+
+
+/*                SIDEBAR                */
+
+.sidebar {
+    flex: 0.1 1;
+    flex-direction: column;
+    align-items: center;
+    background-color: var(--side-background-color);
+    box-shadow: 3px 5px 10px black;
+    padding: 0 30px 0 30px;
+    min-width: 200px;
+}
+
+h2 {
+    margin: 10px;
+}
+
+#chats {
+    flex-direction: column;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+
+#chats > div, #create-chat-btn {
+    transition: 200ms all;
+    background-color: var(--button-color);
+    box-shadow: 3px 0px 5px #0c0c0c;
+    border-radius: 10px;
+    margin: 5px 0;
+    padding: 5px;
+    font-weight: 500;
+    border: 3px solid transparent;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#chats > div:hover {
+    background-color: var(--selected-button-color);
+}
+
+div#create-chat-btn {
+    width: 25px;
+    text-align: center;
+    background-color: var(--create-chat-color);
+    border: 3px solid transparent;
+}
+
+#create-chat-btn:hover {
+    border: 3px solid var(--sber-green);
+}
+
+
+/*                CHAT WINDOW                */
+
+.chat-wrapper {
+    position: relative;
+    flex: 1 1;
+    flex-direction: column;
+    height: 100%;
+    margin: 0px 50px;
+    padding: 0;
+}
+
+.chat-scroll {
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.chat-scroll::-webkit-scrollbar {
+    background: transparent;
+    width: 0px;
+}
+
+#chat {
+    display: flex;
+    flex-direction: column;
+    flex: auto;
+    padding: 15px 0px 80px 0px;
+}
+
+.chat-end {
+    display: block;
+    height: 100px;
+    background-color: #08a652;
+}
+
+.chat-input-wrapper {
+    box-shadow: 3px 3px 10px #000000;
+    margin: 20px;
+    width: 100%;
+    height: 60px;
+    background-color: var(--chat-input-color);
+    border-radius: 30px;
+    position: absolute;
+    align-self: center;
+    bottom: 0;
+}
+
+#chat-input {
+    color: white;
+    font-size: 25px;
+    padding: 0 15px;
+    background: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+}
+
+#chat-input:focus {
+    outline: none;
+    border: none;
+}
+
+/*                CHAT ITEMS                */
+
+.chat-item {
+    box-shadow: 5px 5px 15px #131313;
+    margin: 15px 0;
+    background-color: var(--chat-item-color);
+    padding: 15px;
+    max-width: 70%;
+    border-radius: 30px;
+}
+
+.ai-message {
+    background-color: var(--ai-item-color);
+    margin: 15px auto 15px 0;
+}
+
+
+
+.human-message {
+    background-color: var(--human-item-color);
+    margin: 15px 0 15px auto;
+}
+
+
+/*                  Colors                    */
+body {
+    --sber-green: #08a652;
+
+    --hat-color: #1b1b1b;
+
+    --ai-item-color: #141414;
+    --human-item-color: #202020;
+    --chat-item-color: #1a1a1a;
+
+    --chat-input-color: #111111;
+
+    --selected-create-chat-color: #6d6d6d;
+    --create-chat-color: #5a5a5a;
+
+    --selected-exit-color: #cf4949;
+    --selected-button-color: #6d6d6d;
+    --button-color: #3a3a3a;
+    --button-background-color: #3a3a3a;
+    --side-background-color: #1b1b1b;
+    
+    --main-background-color: #2d2d2d;
+    --main-color: rgb(255, 255, 255);
+}
+
+
+.flex-container {
+    display: flex;
+}
+
+
+@media(max-width: 1450px)
+{
+.chat-wrapper {
+    margin: 0 0;
+}
+}

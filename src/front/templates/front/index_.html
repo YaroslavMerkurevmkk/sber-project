@@ -1,0 +1,59 @@
+{% extends "front/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<button id="create-chat-btn">New chat</button>
+
+<h2>Ваши чаты</h2>
+<div id="chats"></div>
+<script>
+    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        console.log(data);
+        if (data.type === "data" && data.payload && "chats" in data.payload) {
+            const chatsDiv = document.getElementById("chats");
+            data.payload.chats.forEach(chat => {
+                const el = document.createElement("div");
+                el.textContent = `Chat: ${chat.name} (ID: ${chat.id})`;
+                chatsDiv.appendChild(el);
+            });
+        }
+        if (data.type === "notification") {
+            Swal.fire("Notification", data.payload.message, data.payload.result);
+        }
+    };
+
+</script>
+
+<script>
+    document.getElementById("create-chat-btn").addEventListener("click", () => {
+    Swal.fire({
+        title: "Создать новый чат",
+        input: "text",
+        inputLabel: "Введите название",
+        showCancelButton: true,
+        confirmButtonText: "Создать",
+        cancelButtonText: "Отмена",
+        inputValidator: (value) => {
+            if (!value) {
+                return "Название не может быть пустым!";
+            }
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            chatSocket.send(JSON.stringify({
+                type: "command",
+                payload: {
+                    action: "create_chat",
+                    name: result.value
+                }
+            }));
+        }
+    });
+});
+</script>
+
+{% endblock %}

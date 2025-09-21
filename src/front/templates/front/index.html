@@ -3,57 +3,48 @@
 
 {% block content %}
 
-<button id="create-chat-btn">New chat</button>
-
-<h2>Ваши чаты</h2>
-<div id="chats"></div>
-<script>
-    const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
-
-    chatSocket.onmessage = function(e) {
-        const data = JSON.parse(e.data);
-        console.log(data);
-        if (data.type === "data" && data.payload && "chats" in data.payload) {
-            const chatsDiv = document.getElementById("chats");
-            data.payload.chats.forEach(chat => {
-                const el = document.createElement("div");
-                el.textContent = `Chat: ${chat.name} (ID: ${chat.id})`;
-                chatsDiv.appendChild(el);
-            });
-        }
-        if (data.type === "notification") {
-            Swal.fire("Notification", data.payload.message, data.payload.result);
-        }
-    };
-
-</script>
-
-<script>
-    document.getElementById("create-chat-btn").addEventListener("click", () => {
-    Swal.fire({
-        title: "Создать новый чат",
-        input: "text",
-        inputLabel: "Введите название",
-        showCancelButton: true,
-        confirmButtonText: "Создать",
-        cancelButtonText: "Отмена",
-        inputValidator: (value) => {
-            if (!value) {
-                return "Название не может быть пустым!";
-            }
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            chatSocket.send(JSON.stringify({
-                type: "command",
-                payload: {
-                    action: "create_chat",
-                    name: result.value
-                }
-            }));
-        }
-    });
-});
-</script>
+<link rel="stylesheet" href="{% static 'front/css/styles.css' %}">
+<div class="hat-wrapper">
+    <div class="hat flex-container">
+        <div class="logo-container flex-container">
+            <img src="{% static 'front/images/snake_white.svg' %}" height="100%">
+            <div>
+                SAPR<br>Technologies
+            </div>
+        </div>
+        <div id="chatname">Название чата</div>
+        <div id="exit-button">Выход</div>
+    </div>
+</div>
+<div class="main-wrapper flex-container">
+    <div class="sidebar flex-container">
+        <h2>Ваши чаты</h2>
+        <div id="chats" class="flex-container">
+            <div>Чат1</div>
+            <div>Длинный чат</div>
+            <div>Очень длинный чатdddddddddd</div>
+            <div>Чат4</div>
+        </div>
+        <div id="create-chat-btn" title="Создать чат">+</div>
+    </div>
+    <div class="chat-wrapper flex-container">
+        <div class="chat-scroll">
+            <div id="chat">
+                <div class="chat-item human-message">Сообщение пользователя</div>
+                <div class="chat-item ai-message">Сообщение ИИ</div>
+                <div class="chat-item human-message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias nam ipsam cumque laboriosam perferendis, cum repellendus voluptas fugiat cupiditate, est qui illo inventore tenetur maiores neque? Eius sit ratione architecto. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta repellendus sunt labore perferendis tempora? Eligendi cumque, obcaecati iste ex adipisci cupiditate temporibus, sint porro aliquam, voluptate repudiandae error consectetur aliquid? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magnam suscipit cupiditate inventore modi numquam voluptatem ullam minus aperiam accusamus! Atque, non. Corporis sint nesciunt facilis, delectus at error natus minus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Suscipit, vero quia voluptate sunt impedit autem odio nostrum doloremque maiores. Ullam, necessitatibus? Sit nesciunt corporis voluptas totam inventore qui asperiores eaque!</div>
+                <div class="chat-item ai-message">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut vel doloremque esse molestiae, voluptate ab ipsam atque non sed. Voluptatibus omnis iure iste et perferendis repudiandae facilis natus ipsa vero? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rerum autem repudiandae debitis harum voluptates quod accusantium corrupti nesciunt laborum, commodi, provident delectus omnis est eaque nam, natus tempora enim totam? Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit ut accusamus perferendis eaque numquam doloribus provident placeat amet at deserunt officiis laboriosam impedit, voluptatem similique, officia quasi aliquid voluptatum eius? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aliquam, modi in dignissimos pariatur ab eius deleniti nulla veritatis eaque sequi perspiciatis distinctio tempora quia. Illo blanditiis dolorum quis ipsam?</div>
+                <div class="chat-item human-message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias nam ipsam cumque laboriosam perferendis, cum repellendus voluptas fugiat cupiditate, est qui illo inventore tenetur maiores neque? Eius sit ratione architecto. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta repellendus sunt labore perferendis tempora? Eligendi cumque, obcaecati iste ex adipisci cupiditate temporibus, sint porro aliquam, voluptate repudiandae error consectetur aliquid? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magnam suscipit cupiditate inventore modi numquam voluptatem ullam minus aperiam accusamus! Atque, non. Corporis sint nesciunt facilis, delectus at error natus minus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Suscipit, vero quia voluptate sunt impedit autem odio nostrum doloremque maiores. Ullam, necessitatibus? Sit nesciunt corporis voluptas totam inventore qui asperiores eaque!</div>
+                <div class="chat-item ai-message">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut vel doloremque esse molestiae, voluptate ab ipsam atque non sed. Voluptatibus omnis iure iste et perferendis repudiandae facilis natus ipsa vero? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rerum autem repudiandae debitis harum voluptates quod accusantium corrupti nesciunt laborum, commodi, provident delectus omnis est eaque nam, natus tempora enim totam? Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit ut accusamus perferendis eaque numquam doloribus provident placeat amet at deserunt officiis laboriosam impedit, voluptatem similique, officia quasi aliquid voluptatum eius? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aliquam, modi in dignissimos pariatur ab eius deleniti nulla veritatis eaque sequi perspiciatis distinctio tempora quia. Illo blanditiis dolorum quis ipsam?</div>
+                <div class="chat-item human-message">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias nam ipsam cumque laboriosam perferendis, cum repellendus voluptas fugiat cupiditate, est qui illo inventore tenetur maiores neque? Eius sit ratione architecto. Lorem ipsum dolor sit, amet consectetur adipisicing elit. Soluta repellendus sunt labore perferendis tempora? Eligendi cumque, obcaecati iste ex adipisci cupiditate temporibus, sint porro aliquam, voluptate repudiandae error consectetur aliquid? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Magnam suscipit cupiditate inventore modi numquam voluptatem ullam minus aperiam accusamus! Atque, non. Corporis sint nesciunt facilis, delectus at error natus minus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Suscipit, vero quia voluptate sunt impedit autem odio nostrum doloremque maiores. Ullam, necessitatibus? Sit nesciunt corporis voluptas totam inventore qui asperiores eaque!</div>
+                <div class="chat-item ai-message">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Aut vel doloremque esse molestiae, voluptate ab ipsam atque non sed. Voluptatibus omnis iure iste et perferendis repudiandae facilis natus ipsa vero? Lorem ipsum dolor, sit amet consectetur adipisicing elit. Rerum autem repudiandae debitis harum voluptates quod accusantium corrupti nesciunt laborum, commodi, provident delectus omnis est eaque nam, natus tempora enim totam? Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit ut accusamus perferendis eaque numquam doloribus provident placeat amet at deserunt officiis laboriosam impedit, voluptatem similique, officia quasi aliquid voluptatum eius? Lorem, ipsum dolor sit amet consectetur adipisicing elit. Molestias aliquam, modi in dignissimos pariatur ab eius deleniti nulla veritatis eaque sequi perspiciatis distinctio tempora quia. Illo blanditiis dolorum quis ipsam?</div>
+            </div>
+        </div>
+        <div class="chat-input-wrapper flex-container">
+            <input type="text" id="chat-input" placeholder="Напишите что-нибудь...">
+        </div>
+    </div>
+</div>
+<script src="{% static 'front/js/chat.js' %}"></script>
 
 {% endblock %}
