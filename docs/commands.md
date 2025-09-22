@@ -100,6 +100,7 @@
   }
 }
 ```
+ - Если нужно получить сообщения с самого последнего, то `last_ind` указать `-1`
  - `type` [См. Ws Message type](models.md#ws-message-type)
  - `action` [См. Command Action](models.md#command-action)
 
