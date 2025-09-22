@@ -42,3 +42,7 @@ unicorn web.asgi:application --reload --port 8000
 ```bash
 ./bin/run.sh
 ```
+
+### Documentation
+ - [Commands](docs/commands.md)
+ - [Models](docs/models.md)
