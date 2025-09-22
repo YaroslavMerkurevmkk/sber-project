@@ -14,6 +14,7 @@ class MT(Enum):
 class CA(Enum):
     CreateChat = "create_chat"
     CreateMessage = "create_message"
+    GetMessages = "get_messages"
 
 
 class AlertType(Enum):

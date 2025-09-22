@@ -43,7 +43,15 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "message": "Chat created successfully",
                 "result": AlertType.Success.value
             }).to_text_data)
+
         elif command.action == CA.CreateMessage:
             await DatabaseApi.create_message(user, command["chat_id"],
                                              command["content"], MessageAuthor.Human)
             # TODO ask AI agent
+
+        elif command.action == CA.GetMessages:
+            messages = await DatabaseApi.get_messages(command["chat_id"], command["last_ind"])
+            await self.send(WsMessage(MT.Data, {
+                "chat_id": command["chat_id"],
+                "messages": messages
+            }).to_text_data)
