@@ -45,6 +45,10 @@
         </div>
     </div>
 </div>
-<script src="{% static 'front/js/chat.js' %}"></script>
+
+{% block scripts %}
+    <script src="{% static 'front/js/chat.js' %}"></script>
+{% endblock %}
+
 
 {% endblock %}

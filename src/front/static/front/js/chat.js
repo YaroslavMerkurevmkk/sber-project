@@ -1,7 +1,5 @@
 // //Interface
 
-const roomName = JSON.parse(document.getElementById('chatname').innerHTML);
-
 const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
 
 chatSocket.onmessage = function(e) {
@@ -15,14 +13,6 @@ chatSocket.onmessage = function(e) {
         });
     }
 };
-
-const chatSocket = new WebSocket(
-    'ws://'
-    + window.location.host
-    + '/ws/chat/'
-    + roomName
-    + '/'
-);
 
 chatSocket.onmessage = function(e) {
     const data = JSON.parse(e.data);
