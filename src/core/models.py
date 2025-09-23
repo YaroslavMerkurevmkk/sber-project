@@ -11,6 +11,13 @@ class MT(Enum):
     Notification = "notification"
 
 
+class DT(Enum):
+    Chats = "chats"
+    NewChat = "new_chat"
+    AiResponse = "ai_response"
+    Messages = "messages"
+
+
 class CA(Enum):
     CreateChat = "create_chat"
     CreateMessage = "create_message"

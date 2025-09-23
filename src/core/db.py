@@ -40,8 +40,10 @@ class DatabaseApi:
         return result
 
     @staticmethod
-    async def create_chat(user: User, name: str) -> None:
-        await sync_to_async(Chat(user=user, name=name).save)()
+    async def create_chat(user: User, name: str) -> int:
+        chat = Chat(user=user, name=name)
+        await sync_to_async(chat.save)()
+        return chat.id
 
     @staticmethod
     async def rename_chat(user: User, chat_id: int, name: str) -> None:

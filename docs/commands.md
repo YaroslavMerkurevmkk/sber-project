@@ -11,6 +11,7 @@
 {
   "type": "data",
   "payload": {
+    "data_type": "chats",
     "chats": [
       {
         "id": 2,
@@ -32,8 +33,9 @@
   }
 }
 ```
- - Сообщения отправляются только для первого последнего чата (тот, кто создан позже всех)
+ - Сообщения отправляются только для последнего чата (того, который создан позже всех)
  - `type` [См. Ws Message type](models.md#ws-message-type)
+ - `data_type` [См. Data type](models.md#data-type)
  - `chats` [См. Chat](models.md#chat)
  - `messages` [См. Message](models.md#message)
 
@@ -56,14 +58,16 @@
 
 ```json
 {
-  "type": "notification",
+  "type": "data",
   "payload": {
+    "data_type": "new_chat",
     "message": "Chat created successfully!",
     "result": "success"
   }
 }
 ```
  - `type` [См. Ws Message type](models.md#ws-message-type)
+ - `data_type` [См. Data type](models.md#data-type)
  - `message` сообщение для уведомления
  - `result` [См. Alert type](models.md#alert-type)
 
@@ -81,11 +85,21 @@
 }
 ```
  - `type` [См. Ws Message type](models.md#ws-message-type)
+ - `data_type` [См. Data type](models.md#data-type)
  - `action` [См. Command Action](models.md#command-action)
 
 **Response:**
 
-`?` - new message from AI
+```json
+{
+  "type": "data",
+  "payload": {
+    "data_type": "ai_response",
+    "chat_id": 1,
+    "content": "some ai response"
+  }
+}
+```
 
 ### Get messages (pagination)
 **Request:**
@@ -102,6 +116,7 @@
 ```
  - Если нужно получить сообщения с самого последнего, то `last_ind` указать `-1`
  - `type` [См. Ws Message type](models.md#ws-message-type)
+ - `data_type` [См. Data type](models.md#data-type)
  - `action` [См. Command Action](models.md#command-action)
 
 **Response:**
@@ -109,6 +124,7 @@
 {
   "type": "data",
   "payload": {
+    "data_type": "messages",
     "chat_id": 1,
     "messages": [
       {
@@ -122,4 +138,5 @@
 }
 ```
  - `type` [См. Ws Message type](models.md#ws-message-type)
+ - `data_type` [См. Data type](models.md#data-type)
  - `messages` [См. Message](models.md#message)

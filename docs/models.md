@@ -9,6 +9,12 @@
  - `data` - данные
  - `notification` - уведомление
 
+### Data type
+ - `chats` - все чаты пользователя
+ - `new_chat` - новый чат
+ - `ai_response` - ответ от агента, за запрос от пользователя
+ - `messages` - сообщения для чата (пагинация)
+
 ### Command action
  - `create_chat` - создать чат
  - `create_message` - создать сообщение
@@ -21,7 +27,6 @@
  - `info` - информация
  - `question` - вопрос
  - `error` - ошибка
-
 
 
 # Database models

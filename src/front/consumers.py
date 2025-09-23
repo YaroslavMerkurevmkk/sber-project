@@ -2,8 +2,8 @@ import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
-from core.models import WsMessage, MT, Command, CA, AlertType
 from core.db import DatabaseApi
+from core.models import WsMessage, MT, Command, CA, AlertType, DT
 from front.models import MessageAuthor
 
 
@@ -17,7 +17,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         chats = await DatabaseApi.get_user_chats(user)
-        await self.send(text_data=WsMessage(MT.Data, payload={"chats": chats}).to_text_data)
+        await self.send(WsMessage(MT.Data, payload={
+            "data_type": DT.Chats.value,
+            "chats": chats
+        }).to_text_data)
 
     async def disconnect(self, close_code):
         pass
@@ -38,20 +41,33 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def _process_command(self, command: Command) -> None:
         user = self.scope["user"]
         if command.action == CA.CreateChat:
-            await DatabaseApi.create_chat(user, command["name"])
-            await self.send(WsMessage(MT.Notification, {
-                "message": "Chat created successfully",
-                "result": AlertType.Success.value
+            new_chat_id = await DatabaseApi.create_chat(user, command["name"])
+            await self.send(WsMessage(MT.Data, {
+                "data_type": DT.NewChat.value,
+                "chat_id": new_chat_id
             }).to_text_data)
 
         elif command.action == CA.CreateMessage:
-            await DatabaseApi.create_message(user, command["chat_id"],
+            some_ai_response = "Hello world!"
+
+            chat_id = command["chat_id"]
+            await DatabaseApi.create_message(user, chat_id,
                                              command["content"], MessageAuthor.Human)
-            # TODO ask AI agent
+            await DatabaseApi.create_message(user, chat_id,
+                                             some_ai_response,
+                                             MessageAuthor.Agent)
+
+            await self.send(WsMessage(MT.Data, payload={
+                "data_type": DT.AiResponse.value,
+                "chat_id": chat_id,
+                "content": some_ai_response
+            }).to_text_data)
 
         elif command.action == CA.GetMessages:
-            messages = await DatabaseApi.get_messages(command["chat_id"], command["last_ind"])
+            chat_id = command["chat_id"]
+            messages = await DatabaseApi.get_messages(chat_id, command["last_ind"])
             await self.send(WsMessage(MT.Data, {
-                "chat_id": command["chat_id"],
+                "data_type": DT.Messages.value,
+                "chat_id": chat_id,
                 "messages": messages
             }).to_text_data)
