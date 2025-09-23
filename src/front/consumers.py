@@ -41,10 +41,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def _process_command(self, command: Command) -> None:
         user = self.scope["user"]
         if command.action == CA.CreateChat:
-            new_chat_id = await DatabaseApi.create_chat(user, command["name"])
+            new_chat_base_info = await DatabaseApi.create_chat(user, command["name"])
             await self.send(WsMessage(MT.Data, {
                 "data_type": DT.NewChat.value,
-                "chat_id": new_chat_id
+                "chat": new_chat_base_info
             }).to_text_data)
 
         elif command.action == CA.CreateMessage:

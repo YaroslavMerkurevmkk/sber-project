@@ -61,15 +61,16 @@
   "type": "data",
   "payload": {
     "data_type": "new_chat",
-    "message": "Chat created successfully!",
-    "result": "success"
+    "chat": {
+      "id": 2,
+      "name": "new name"
+    }
   }
 }
 ```
  - `type` [См. Ws Message type](models.md#ws-message-type)
  - `data_type` [См. Data type](models.md#data-type)
- - `message` сообщение для уведомления
- - `result` [См. Alert type](models.md#alert-type)
+ - `chat` [См. Chat](models.md#chat)
 
 ### Create new message
 **Request:**
