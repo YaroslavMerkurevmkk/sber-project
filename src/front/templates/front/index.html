@@ -3,16 +3,17 @@
 
 {% block content %}
 
-<link rel="stylesheet" href="{% static 'front/css/styles.css' %}">
+<link rel="stylesheet" href="static/css/styles.css">
 <div class="hat-wrapper">
     <div class="hat flex-container">
         <div class="logo-container flex-container">
-            <img src="{% static 'front/images/snake_white.svg' %}" height="100%">
+            <img src="static/images/snake_white.svg" height="100%">
             <div>
                 SAPR<br>Technologies
             </div>
         </div>
         <div id="chatname">Название чата</div>
+        <div id="menu-button">Меню</div>
         <div id="exit-button">Выход</div>
     </div>
 </div>
@@ -20,7 +21,7 @@
     <div class="sidebar flex-container">
         <h2>Ваши чаты</h2>
         <div id="chats" class="flex-container">
-            <div>Чат1</div>
+            <div>Чат</div>
             <div>Длинный чат</div>
             <div>Очень длинный чатdddddddddd</div>
             <div>Чат4</div>
@@ -42,12 +43,14 @@
         </div>
         <div class="chat-input-wrapper flex-container">
             <input type="text" id="chat-input" placeholder="Напишите что-нибудь...">
+            <div class="input-button" id="chat-speak-message"><image src="static/images/micro.svg"></div>
+            <div class="input-button" id="chat-message-submit"><image src="static/images/send.svg"></image></div>
         </div>
     </div>
 </div>
 
 {% block scripts %}
-    <script src="{% static 'front/js/chat.js' %}"></script>
+    <script type="module" src="{% static 'front/js/chat.js' %}"></script>
 {% endblock %}
 
 
