@@ -5,6 +5,7 @@ const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
 let chatsDiv;
 let chatDiv;
 let sideDiv;
+let chatNameDiv;
 
 //States
 let chats;
@@ -158,11 +159,13 @@ function openChat(id)
 
     const chat = chats.find((c) => c.id === id);
 
+    chatNameDiv.innerHTML = chat.name;
+
     if (chat.messages.length == 0)
         loadMessages(id, -1);
     else
     {
-        data.messages.forEach((message) =>{
+        chat.messages.forEach((message) =>{
             let el = document.createElement("div");
             el.classList.add('chat-item');
             el.dataset.id = message.id;
@@ -186,6 +189,7 @@ function clearChat()
 
 function loadChat(id)
 {
+    const chat = chats.find((c) => c.id === id);
     chat.messages.forEach((message) =>{
         let el = document.createElement("div");
         el.classList.add('chat-item');
@@ -242,6 +246,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
     chatsDiv = document.getElementById("chats");
     chatDiv = document.getElementById("chat");
+    chatNameDiv = document.getElementById("chatname");
     sideDiv = document.querySelector(".sidebar");
 
     //Events
