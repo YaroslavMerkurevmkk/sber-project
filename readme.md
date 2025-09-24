@@ -43,6 +43,12 @@ unicorn web.asgi:application --reload --port 8000
 ./bin/run.sh
 ```
 
+### Start on Windows
+Run `bin\run.bat` file *or*
+```bash
+bin\run_con.bat
+```
+
 ### Documentation
  - [Commands](docs/commands.md)
  - [Models](docs/models.md)
