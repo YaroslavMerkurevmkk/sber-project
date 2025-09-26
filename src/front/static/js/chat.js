@@ -80,7 +80,7 @@ chatSocket.onmessage = function(e) {
         }
         case 'new_chat':
         {
-            addChat(payload.chat);
+            addChat(payload.chat, true);
             chats.push(payload.chat);
             openChat(payload.chat.id);
             break;
@@ -162,7 +162,7 @@ function openChat(id)
     cur_chat = id;
 }
 
-function addChat(chat)
+function addChat(chat, reverse=false)
 {
     if (!('messages' in chat))
         chat.messages = [];
@@ -170,7 +170,10 @@ function addChat(chat)
     el.classList.add('chats-item');
     el.dataset.id = `${chat.id}`;
     el.innerHTML = el.title = `${chat.name}`;
-    chatsDiv.appendChild(el);
+    if (reverse)
+        chatsDiv.prepend(el);
+    else
+        chatsDiv.appendChild(el);
 }
 
 function formMessage(message)
