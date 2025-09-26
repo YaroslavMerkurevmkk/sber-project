@@ -267,12 +267,12 @@ document.addEventListener("DOMContentLoaded", () =>{
     });
 
     document.querySelector('.chat-scroll').addEventListener('scroll', () => {
-        const rectItem = document.querySelector('.chat-item').getBoundingClientRect();
+        const rectItem = document.querySelector('.chat-item');
         const rect = document.querySelector('.chat-wrapper').getBoundingClientRect();
 
 
         //First item is visible
-        if (rect.top < rectItem.top)
+        if (rect.top < rectItem.getBoundingClientRect().top)
             loadMessages(cur_chat, parseInt(rectItem.dataset.id));
     });
 
@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
     input.focus();
     input.onkeyup = function(e) {
-        if (e.keyCode === 13) {  // enter, return
+        if (e.code === "Enter" && e.shiftKey) {  // enter, return
             submit.click();
         }
     };
@@ -303,6 +303,7 @@ document.addEventListener("DOMContentLoaded", () =>{
         chats.find((c) => c.id === cur_chat).messages.push(message);
         chatDiv.appendChild(formMessage(message));
         input.value = '';
+        input.oninput();
     };
 
     document.getElementById('chat-speak-message').addEventListener('click', (e) => {
@@ -319,4 +320,16 @@ document.addEventListener("DOMContentLoaded", () =>{
     });
 
     document.getElementById("create-chat-btn").addEventListener("click", createChat);
+
+
+    document.querySelectorAll("textarea").forEach(function(textarea) {
+        textarea.style.height = textarea.scrollHeight + "px";
+        // textarea.style.overflowY = "hidden";
+
+        
+        textarea.oninput = function() {
+            this.style.height = "auto";
+            this.style.height = Math.min(this.scrollHeight, 200) + "px";
+        }
+    });
 });
