@@ -68,3 +68,11 @@ class DatabaseApi:
 
         await sync_to_async(Message(content=content, author=author.value,
                                     links=links, chat=chat).save)()
+
+    @staticmethod
+    async def get_chat(user: User, chat_id: int) -> list[dict[str, str]]:
+        qs = await sync_to_async(
+            lambda: Chat.objects.get(id=chat_id, user=user).messages.all()
+        )()
+        result = await sync_to_async(lambda: [msg.to_ai_message() for msg in qs])()
+        return result

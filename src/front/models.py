@@ -34,6 +34,12 @@ class Message(models.Model):
 
     chat = models.ForeignKey(Chat, related_name="messages", on_delete=models.CASCADE, verbose_name="Chat")
 
+    def to_ai_message(self) -> dict[str, str]:
+        return {
+            "role": "user" if self.author == MessageAuthor.Human.value else "assistant",
+            "content": self.content
+        }
+
     def __iter__(self):
         yield "id", self.id
         yield "content", self.content
