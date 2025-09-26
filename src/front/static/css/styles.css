@@ -121,6 +121,10 @@ h2 {
     background-color: var(--selected-button-color);
 }
 
+#chats > div.chat-selected {
+    border: 3px solid var(--sber-green);
+}
+
 div#create-chat-btn {
     width: 25px;
     text-align: center;

@@ -1,5 +1,3 @@
-// //Interface
-
 const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
 
 let chatsDiv;
@@ -9,7 +7,7 @@ let chatNameDiv;
 
 //States
 let chats;
-let cur_chat = 0;
+let cur_chat = -1;
 
 WebSocket.onopen = function()
 {
@@ -18,6 +16,7 @@ WebSocket.onopen = function()
 
 chatSocket.onmessage = function(e) {
     let data = JSON.parse(e.data);
+    console.log(data);
     let payload = data.payload;
 
     if (data.type === "notification")
@@ -40,46 +39,30 @@ chatSocket.onmessage = function(e) {
                 return;
             }
 
-            cur_chat = chats[0].id;
-
             chats.forEach(chat => {
-                if (!(messages in chat))
-                    chat.messages = [];
-                let el = document.createElement("div");
-                el.classList.add('chats-item');
-                el.dataset.id = `${chat.id}`;
-                el.innerHTML = el.title = `${chat.name}`;
-                chatsDiv.appendChild(el);
+                addChat(chat)
             });
+
+            openChat(chats[0].id);
             break;
         }
         case 'messages': //Load messages
         {
-            chats.find((c) => c.id === payload.chat_id).unshift(data.messages);
+            let chat = chats.find((c) => c.id === payload.chat_id);
+            console.log(chat.messages);
+            chat.messages = payload.messages.concat(chat.messages);
 
             if (payload.chat_id != cur_chat)
                 break;
 
             payload.messages.reverse();
 
-
-            payload.messages.forEach((message) =>{
-                let el = document.createElement("div");
-                el.classList.add('chat-item');
-                el.dataset.id = message.id;
-                if (message.author == 0) //Agent
-                    el.classList.add('ai-message');
-                else
-                    el.classList.add('human-message');
-                el.innerHTML = message.content;
-
-                chatsDiv.prepend(el);
-            });
+            prependMessages(payload.messages);
             break;
         }
         case 'ai_response': //Create message
         {
-            chats.find((c) => c.id === payload.chat_id).append({
+            chats.find((c) => c.id === payload.chat_id).messages.push({
                 author: 0,
                 content: payload.content
             });
@@ -88,17 +71,17 @@ chatSocket.onmessage = function(e) {
 
             let el = document.createElement("div");
             el.classList.add('chat-item');
-            // el.dataset.id = message.id;
             el.classList.add('ai-message');
 
-            el.innerHTML = message.content;
+            el.innerHTML = payload.content;
 
-            chatsDiv.appendChild(el);
+            chatDiv.appendChild(el);
             break;
         }
         case 'new_chat':
         {
-            chats.append(payload.chat);
+            addChat(payload.chat);
+            chats.push(payload.chat);
             openChat(payload.chat.id);
             break;
         }
@@ -117,7 +100,7 @@ function loadMessages(chat, id)
         type: "command",
         payload: {
             action: "get_messages",
-            chat: chat,
+            chat_id: chat,
             last_ind: id
         }
     }));
@@ -155,9 +138,17 @@ function openChat(id)
     if (cur_chat == id)
         return;
 
+    if (cur_chat != -1)
+    {
+        const oldChatNode = chatsDiv.querySelector(`div[data-id=\"${cur_chat}\"]`);
+        oldChatNode.classList.remove('chat-selected');
+    }
+
     clearChat();
 
     const chat = chats.find((c) => c.id === id);
+    const chatNode = chatsDiv.querySelector(`div[data-id=\"${id}\"]`);
+    chatNode.classList.add('chat-selected');
 
     chatNameDiv.innerHTML = chat.name;
 
@@ -165,21 +156,48 @@ function openChat(id)
         loadMessages(id, -1);
     else
     {
-        chat.messages.forEach((message) =>{
-            let el = document.createElement("div");
-            el.classList.add('chat-item');
-            el.dataset.id = message.id;
-            if (message.author == 0)
-                el.classList.add('ai-message');
-            else
-                el.classList.add('human-message');
-            el.innerHTML = message.content;
-
-            chatsDiv.appendChild(el);
-        });
+        appendMessages(chat.messages);
     }
 
     cur_chat = id;
+}
+
+function addChat(chat)
+{
+    if (!('messages' in chat))
+        chat.messages = [];
+    let el = document.createElement("div");
+    el.classList.add('chats-item');
+    el.dataset.id = `${chat.id}`;
+    el.innerHTML = el.title = `${chat.name}`;
+    chatsDiv.appendChild(el);
+}
+
+function formMessage(message)
+{
+    let el = document.createElement("div");
+    el.classList.add('chat-item');
+    el.dataset.id = message.id;
+    if (message.author == 0) //Agent
+        el.classList.add('ai-message');
+    else
+        el.classList.add('human-message');
+    el.innerHTML = message.content;
+    return el;
+}
+
+function appendMessages(messages)
+{
+    messages.forEach((message) =>{
+        chatDiv.appendChild(formMessage(message));
+    });
+}
+
+function prependMessages(messages)
+{
+    messages.forEach((message) =>{
+        chatDiv.prepend(formMessage(message));
+    });
 }
 
 function clearChat()
@@ -190,21 +208,8 @@ function clearChat()
 function loadChat(id)
 {
     const chat = chats.find((c) => c.id === id);
-    chat.messages.forEach((message) =>{
-        let el = document.createElement("div");
-        el.classList.add('chat-item');
-        el.dataset.id = message.id;
-        if (message.author == 0) //Agent
-            el.classList.add('ai-message');
-        else
-            el.classList.add('human-message');
-        el.innerHTML = message.content;
-
-        chatsDiv.prepend(el);
-    });
+    prependMessages(chat.messages);
 }
-
-
 
 
 // ------------------ Голосовой ввод ------------------
@@ -268,7 +273,7 @@ document.addEventListener("DOMContentLoaded", () =>{
 
         //First item is visible
         if (rect.top < rectItem.top)
-            loadMessages(cur_chat, chat);
+            loadMessages(cur_chat, parseInt(rectItem.dataset.id));
     });
 
     document.getElementById('menu-button').addEventListener('click', () => {
@@ -290,9 +295,13 @@ document.addEventListener("DOMContentLoaded", () =>{
             type: "command",
             payload: {
                 action: "create_message",
-                "chat_id": current_chat
+                "chat_id": cur_chat,
+                content: input.value
             }
         }));
+        const message = {author: 1, content: input.value, id: -1};
+        chats.find((c) => c.id === cur_chat).messages.push(message);
+        chatDiv.appendChild(formMessage(message));
         input.value = '';
     };
 
@@ -301,12 +310,12 @@ document.addEventListener("DOMContentLoaded", () =>{
     });
 
     document.getElementById('chats').addEventListener('click', (e) => {
-        let target = e.target.closest('.chats-item');
+        let target = e.target;
 
-        if (!target)
+        if (!target.dataset.id)
             return;
 
-        openChat(target.dataset.id);
+        openChat(parseInt(target.dataset.id));
     });
 
     document.getElementById("create-chat-btn").addEventListener("click", createChat);
