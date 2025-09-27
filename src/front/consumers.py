@@ -2,6 +2,7 @@ import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
+from core.agent import GlobalAsyncAgent
 from core.db import DatabaseApi
 from core.models import WsMessage, MT, Command, CA, AlertType, DT
 from front.models import MessageAuthor
@@ -48,19 +49,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }).to_text_data)
 
         elif command.action == CA.CreateMessage:
-            some_ai_response = "Hello world!"
-
             chat_id = command["chat_id"]
             await DatabaseApi.create_message(user, chat_id,
                                              command["content"], MessageAuthor.Human)
+            chat = await DatabaseApi.get_chat(user, chat_id)
+            ai_response = await GlobalAsyncAgent.process_message(chat)
             await DatabaseApi.create_message(user, chat_id,
-                                             some_ai_response,
+                                             ai_response,
                                              MessageAuthor.Agent)
 
             await self.send(WsMessage(MT.Data, payload={
                 "data_type": DT.AiResponse.value,
                 "chat_id": chat_id,
-                "content": some_ai_response
+                "content": ai_response
             }).to_text_data)
 
         elif command.action == CA.GetMessages:

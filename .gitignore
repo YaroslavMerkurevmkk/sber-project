@@ -4,3 +4,4 @@ venv
 config
 __pycache__
 staticfiles
+data

@@ -1,23 +1,23 @@
 from langchain_gigachat.chat_models import GigaChat
-from langgraph.checkpoint.memory import MemorySaver
 from langgraph.prebuilt import create_react_agent
 
-from config import GlobalConfig
+from core.config import GlobalConfig
+from core.tools.calculator import BusinessSupport
 
 
-class Chat:
+class AsyncChat:
     _model: GigaChat = None
-    _model_with_tools: GigaChat = None
 
     def __init__(self):
         self._model = self._initialize_model()
 
-    def _initialize_model(self) -> GigaChat:
+    @staticmethod
+    def _initialize_model() -> GigaChat:
         return GigaChat(
             credentials=GlobalConfig["token"],
             scope="GIGACHAT_API_PERS",
             model="GigaChat-Pro",
-            verify_ssl_certs=False,
+            verify_ssl_certs=False
         )
 
     @property
@@ -25,18 +25,21 @@ class Chat:
         return self._model
 
 
-class Agent(Chat):
+class AsyncAgent(AsyncChat):
     def __init__(self, tools: list, system_prompt: str):
         super().__init__()
-
+        self._tools = tools
+        self._system_prompt = system_prompt
         self.agent = create_react_agent(
             self._model,
-            tools=tools,
-            checkpointer=MemorySaver(),
-            prompt=system_prompt,
+            tools=self._tools,
+            prompt=self._system_prompt
         )
 
-    def invoke(self, message, thread_id: str):
-        return self.agent.invoke(
-            {"messages": [message]}, config={"configurable": {"thread_id": thread_id}}
-        )
+    async def process_message(self, messages: list) -> str:
+        response = await self.agent.ainvoke({"messages": messages})
+        print(response["messages"][-1].content)
+        return response["messages"][-1].content
+
+
+GlobalAsyncAgent = AsyncAgent([BusinessSupport()], "Ты ассистент для бизнеса, твоя задача помогать пользователям")
