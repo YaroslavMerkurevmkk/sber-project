@@ -16,7 +16,7 @@ class BusinessSupport(BaseTool):
 
     def __init__(self):
         super().__init__()
-        loader = DirectoryLoader("/home/ghost/Documents/projects/sber-project/data/Поддержка бизнеса/", glob="*.md",
+        loader = DirectoryLoader(__file__[:-29] + "/data/Поддержка бизнеса/", glob="*.md",
                                  loader_cls=TextLoader, loader_kwargs={"encoding": "utf-8"})
         docs = loader.load()
         splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)

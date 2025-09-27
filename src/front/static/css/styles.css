@@ -244,7 +244,7 @@ div#create-chat-btn {
     box-shadow: 5px 5px 15px #131313;
     margin: 15px 0;
     background-color: var(--chat-item-color);
-    padding: 15px;
+    padding: 0px 15px;
     max-width: 70%;
     border-radius: 30px;
     overflow-wrap: break-word;

@@ -1,9 +1,12 @@
 const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+const md2html = new showdown.Converter();
+
 
 let chatsDiv;
 let chatDiv;
 let sideDiv;
 let chatNameDiv;
+let submitBtn;
 
 //States
 let chats;
@@ -76,6 +79,7 @@ chatSocket.onmessage = function(e) {
             el.innerHTML = payload.content;
 
             chatDiv.appendChild(el);
+            submitBtn.disabled = false;
             break;
         }
         case 'new_chat':
@@ -185,7 +189,7 @@ function formMessage(message)
         el.classList.add('ai-message');
     else
         el.classList.add('human-message');
-    el.innerHTML = message.content;
+    el.innerHTML = md2html.makeHtml(message.content);
     return el;
 }
 
@@ -284,16 +288,16 @@ document.addEventListener("DOMContentLoaded", () =>{
     });
 
     const input = document.getElementById('chat-input');
-    const submit = document.getElementById('chat-message-submit');
+    submitBtn = document.getElementById('chat-message-submit');
 
     input.focus();
     input.onkeyup = function(e) {
-        if (e.code === "Enter" && e.shiftKey) {  // enter, return
-            submit.click();
+        if (e.code === "Enter" && !e.shiftKey) {  // enter, return
+            submitBtn.click();
         }
     };
 
-    submit.onclick = function(e) {
+    submitBtn.onclick = function(e) {
         chatSocket.send(JSON.stringify({
             type: "command",
             payload: {
@@ -306,6 +310,7 @@ document.addEventListener("DOMContentLoaded", () =>{
         chats.find((c) => c.id === cur_chat).messages.push(message);
         chatDiv.appendChild(formMessage(message));
         input.value = '';
+        submitBtn.disabled = true;
         input.oninput();
     };
 
