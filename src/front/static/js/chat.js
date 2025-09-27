@@ -60,7 +60,12 @@ chatSocket.onmessage = function(e) {
 
             payload.messages.reverse();
 
+            let isEmpty = chatDiv.childNodes.length == 0;
+
             prependMessages(payload.messages);
+
+            if (isEmpty)
+                scrollToEnd();
             break;
         }
         case 'ai_response': //Create message
@@ -72,14 +77,9 @@ chatSocket.onmessage = function(e) {
             if (cur_chat !== payload.chat_id)
                 break;
 
-            let el = document.createElement("div");
-            el.classList.add('chat-item');
-            el.classList.add('ai-message');
-
-            el.innerHTML = payload.content;
-
-            chatDiv.appendChild(el);
+            chatDiv.appendChild(formMessage({content: payload.content, author: 0, id: -1}));
             submitBtn.disabled = false;
+            scrollToEnd();
             break;
         }
         case 'new_chat':
@@ -164,6 +164,7 @@ function openChat(id)
     }
 
     cur_chat = id;
+    scrollToEnd();
 }
 
 function addChat(chat, reverse=false)
@@ -218,6 +219,10 @@ function loadChat(id)
     prependMessages(chat.messages);
 }
 
+function scrollToEnd()
+{
+    chatDiv.parentNode.scrollTop = chatDiv.parentNode.scrollHeight;
+}
 
 // ------------------ Голосовой ввод ------------------
 function startVoiceInput() {
@@ -312,6 +317,7 @@ document.addEventListener("DOMContentLoaded", () =>{
         input.value = '';
         submitBtn.disabled = true;
         input.oninput();
+        scrollToEnd();
     };
 
     document.getElementById('chat-speak-message').addEventListener('click', (e) => {

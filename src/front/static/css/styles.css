@@ -170,18 +170,13 @@ div#create-chat-btn {
     overflow-x: visible;
 }
 
-.chat-end {
-    display: block;
-    height: 100px;
-    background-color: #08a652;
-}
 
 /*                CHAT INPUT                */
 
 
 .chat-input-wrapper {
     box-shadow: 3px 3px 10px #000000;
-    margin: 20px 20px;
+    margin: 11px 20px;
     width: 95%;
     min-height: 60px;
     background-color: var(--chat-input-color);
