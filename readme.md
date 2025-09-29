@@ -26,7 +26,8 @@ Create directory `config` and file `config/config.json`
   "db_name": "config/db.sqlite3",
   "db_port": 3306,
   "db_user": "sber_admin",
-  "db_password": "parol"
+  "db_password": "parol",
+  "data_dir": "data"
 }
 ```
 
