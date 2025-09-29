@@ -19,6 +19,7 @@ Create directory `config` and file `config/config.json`
 ```json
 {
   "token": "Giga Chat token",
+  "debug": true,
   "secret_key": "",
   "allowed_hosts": [],
   "db_backend": "sqlite3",

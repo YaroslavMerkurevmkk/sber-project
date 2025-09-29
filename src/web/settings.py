@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 SECRET_KEY = GlobalConfig["secret_key"]
 
-DEBUG = True
+DEBUG = GlobalConfig["debug"]
 
 ALLOWED_HOSTS = GlobalConfig.get("allowed_hosts", [])
 
