@@ -1,4 +1,5 @@
-const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/chat/');
+const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+const chatSocket = new WebSocket(protocol + window.location.host + '/ws/chat/');
 const md2html = new showdown.Converter();
 
 
