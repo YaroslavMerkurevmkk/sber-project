@@ -16,10 +16,12 @@ class DT(Enum):
     NewChat = "new_chat"
     AiResponse = "ai_response"
     Messages = "messages"
+    DeletedChat = "deleted_chat"
 
 
 class CA(Enum):
     CreateChat = "create_chat"
+    DeleteChat = "delete_chat"
     CreateMessage = "create_message"
     GetMessages = "get_messages"
 

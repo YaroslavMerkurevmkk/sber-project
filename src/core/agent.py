@@ -2,7 +2,9 @@ from langchain_gigachat.chat_models import GigaChat
 from langgraph.prebuilt import create_react_agent
 
 from core.config import GlobalConfig
-from core.tools.calculator import BusinessSupport, Recommendations, DigitalMaturity
+from core.tools.business_support import BusinessSupport
+from core.tools.digital_maturity import DigitalMaturity
+from core.tools.recomendations import Recommendations
 
 
 class AsyncChat:
@@ -38,8 +40,11 @@ class AsyncAgent(AsyncChat):
 
     async def process_message(self, messages: list) -> str:
         response = await self.agent.ainvoke({"messages": messages})
-        print(response["messages"][-1].content)
         return response["messages"][-1].content
 
 
-GlobalAsyncAgent = AsyncAgent([BusinessSupport(), Recommendations(), DigitalMaturity()], "Ты ассистент для бизнеса, твоя задача помогать пользователям")
+GlobalAsyncAgent = AsyncAgent([
+    BusinessSupport(),
+    Recommendations(),
+    DigitalMaturity()],
+    "Ты ассистент для бизнеса, твоя задача помогать пользователям")

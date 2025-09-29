@@ -26,6 +26,9 @@ class Chat(models.Model):
         yield "name", self.name
         yield "messages", [dict(message) for message in self.messages.all()]
 
+    def __str__(self):
+        return self.name
+
 
 class Message(models.Model):
     content = models.TextField("Content", null=False)
@@ -45,3 +48,6 @@ class Message(models.Model):
         yield "content", self.content
         yield "author", self.author
         yield "links", self.links
+
+    def __str__(self):
+        return self.content[:20]

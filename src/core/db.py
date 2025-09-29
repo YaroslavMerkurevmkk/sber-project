@@ -5,6 +5,7 @@ from typing import Any
 from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
 
+from core.constants import START_MESSAGE
 from front.models import Chat, Message, MessageAuthor
 
 User = get_user_model()
@@ -43,6 +44,8 @@ class DatabaseApi:
     async def create_chat(user: User, name: str) -> dict[str, Any]:
         chat = Chat(user=user, name=name)
         await sync_to_async(chat.save)()
+        await sync_to_async(Message(content=START_MESSAGE, author=MessageAuthor.Agent.value,
+                                    links="", chat=chat).save)()
         return chat.base_info
 
     @staticmethod
@@ -76,3 +79,7 @@ class DatabaseApi:
         )()
         result = await sync_to_async(lambda: [msg.to_ai_message() for msg in qs])()
         return result
+
+    @staticmethod
+    async def delete_chat(user: User, chat_id: int) -> None:
+        Chat.objects.filter(user=user, id=chat_id).delete()

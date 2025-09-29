@@ -17,6 +17,7 @@
 
 ### Command action
  - `create_chat` - создать чат
+ - `delete_chat` - удалить чат
  - `create_message` - создать сообщение
  - `get_messages` - получить сообщения (пагинация)
 

@@ -72,3 +72,11 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "chat_id": chat_id,
                 "messages": messages
             }).to_text_data)
+
+        elif command.action == CA.DeleteChat:
+            chat_id = command["chat_id"]
+            await DatabaseApi.delete_chat(user, chat_id)
+            await self.send(WsMessage(MT.Data, {
+                "data_type": DT.DeletedChat.value,
+                "chat_id": chat_id
+            }).to_text_data)

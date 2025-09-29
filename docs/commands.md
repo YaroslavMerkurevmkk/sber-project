@@ -141,3 +141,34 @@
  - `type` [См. Ws Message type](models.md#ws-message-type)
  - `data_type` [См. Data type](models.md#data-type)
  - `messages` [См. Message](models.md#message)
+
+
+### Delete chat
+**Request:**
+
+```json
+{
+  "type": "command",
+  "payload": {
+    "action": "delete_chat",
+    "chat_id": 1
+  }
+}
+```
+ - `type` [См. Ws Message type](models.md#ws-message-type)
+ - `data_type` [См. Data type](models.md#data-type)
+ - `action` [См. Command Action](models.md#command-action)
+
+**Response:**
+```json
+{
+  "type": "data",
+  "payload": {
+    "data_type": "deleted_chat",
+    "chat_id": 1
+  }
+}
+```
+ - `type` [См. Ws Message type](models.md#ws-message-type)
+ - `data_type` [См. Data type](models.md#data-type)
+ - `messages` [См. Message](models.md#message)
