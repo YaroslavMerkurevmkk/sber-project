@@ -22,6 +22,7 @@ Create directory `config` and file `config/config.json`
   "debug": true,
   "secret_key": "",
   "allowed_hosts": [],
+  "csrf_trusted_origins": [],
   "db_backend": "sqlite3",
   "db_host": "localhost",
   "db_name": "config/db.sqlite3",
