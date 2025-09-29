@@ -43,11 +43,8 @@ class AsyncAgent(AsyncChat):
         return response["messages"][-1].content
 
 
-# GlobalAsyncAgent = AsyncAgent([
-#     BusinessSupport(),
-#     Recommendations(),
-#     DigitalMaturity()],
-#     "Ты ассистент для бизнеса, твоя задача помогать пользователям")
-
-GlobalAsyncAgent = AsyncAgent([],
+GlobalAsyncAgent = AsyncAgent([
+    BusinessSupport(),
+    Recommendations(),
+    DigitalMaturity()],
     "Ты ассистент для бизнеса, твоя задача помогать пользователям")
