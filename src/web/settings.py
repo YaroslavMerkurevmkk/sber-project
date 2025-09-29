@@ -11,6 +11,8 @@ DEBUG = GlobalConfig["debug"]
 
 ALLOWED_HOSTS = GlobalConfig.get("allowed_hosts", [])
 
+CSRF_TRUSTED_ORIGINS = GlobalConfig.get("csrf_trusted_origins", [])
+
 INSTALLED_APPS = [
     'channels',
     'django.contrib.admin',
