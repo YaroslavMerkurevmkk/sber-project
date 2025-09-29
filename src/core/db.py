@@ -4,6 +4,7 @@ from typing import Any
 
 from asgiref.sync import sync_to_async
 from django.contrib.auth import get_user_model
+from logging import Logger, getLogger
 
 from core.constants import START_MESSAGE
 from front.models import Chat, Message, MessageAuthor
@@ -12,6 +13,8 @@ User = get_user_model()
 
 
 class DatabaseApi:
+    tag: str = "database-api"
+    logger: Logger = getLogger("front")
 
     @staticmethod
     async def get_user_chats(user: User) -> list[dict[str, Any]]:
@@ -46,6 +49,7 @@ class DatabaseApi:
         await sync_to_async(chat.save)()
         await sync_to_async(Message(content=START_MESSAGE, author=MessageAuthor.Agent.value,
                                     links="", chat=chat).save)()
+        DatabaseApi.logger.info(f"[{DatabaseApi.tag}] Created chat: {chat.id}")
         return chat.base_info
 
     @staticmethod
@@ -54,7 +58,7 @@ class DatabaseApi:
             chat = await sync_to_async(Chat.objects.filter(user=user, id=chat_id).first)()
             chat.name = name
             await sync_to_async(chat.save)()
-
+            DatabaseApi.logger.info(f"[{DatabaseApi.tag}] Renamed chat: {chat.id}")
         except Chat.DoesNotExist:
             raise ValueError("Chat not found!")
 
@@ -69,8 +73,10 @@ class DatabaseApi:
         except Chat.DoesNotExist:
             raise ValueError("Chat not found!")
 
-        await sync_to_async(Message(content=content, author=author.value,
-                                    links=links, chat=chat).save)()
+        msg = Message(content=content, author=author.value,
+                                    links=links, chat=chat)
+        await sync_to_async(msg.save)()
+        DatabaseApi.logger.info(f"[{DatabaseApi.tag}] Created message: {msg.id}")
 
     @staticmethod
     async def get_chat(user: User, chat_id: int) -> list[dict[str, str]]:

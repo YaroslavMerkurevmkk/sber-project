@@ -1,4 +1,5 @@
 import json
+from logging import Logger, getLogger
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
@@ -9,6 +10,9 @@ from front.models import MessageAuthor
 
 
 class ChatConsumer(AsyncWebsocketConsumer):
+    _tag: str = "ws-consumer"
+    _logger: Logger = getLogger("front")
+
     async def connect(self):
         user = self.scope["user"]
         if not user.is_authenticated:
@@ -16,7 +20,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             return
 
         await self.accept()
-
+        self._logger.info(f"[{self._tag}] Accepted connection for {user}")
         chats = await DatabaseApi.get_user_chats(user)
         await self.send(WsMessage(MT.Data, payload={
             "data_type": DT.Chats.value,
@@ -80,3 +84,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "data_type": DT.DeletedChat.value,
                 "chat_id": chat_id
             }).to_text_data)
+        else:
+            self._logger.warning(f"[{self._tag}] Unknown command {command.action.value} from {user}")
+            return
+        self._logger.info(f"[{self._tag}] Processed command {command.action.value} from {user}")
