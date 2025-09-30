@@ -82,6 +82,7 @@ chatSocket.onmessage = function(e) {
             if (cur_chat !== payload.chat_id)
                 break;
 
+            setInputEnabled(true);
             chatDiv.appendChild(formMessage({content: payload.content, author: 0, id: -1}));
             submitBtn.disabled = false;
             scrollToEnd();
@@ -98,6 +99,11 @@ chatSocket.onmessage = function(e) {
         case 'deleted_chat':
         {
             chatsDiv.querySelector(`div[data-id=\"${payload.chat_id}\"]`).remove();
+            delete chats.find((c) => c.id == payload.chat_id);
+            if (chats.length === 0)
+                setInputEnabled(false);
+            else if (cur_chat == payload.chat_id)
+                openChat(chats[0].id);
         }
     }
 };
@@ -155,7 +161,8 @@ function openChat(id)
     if (cur_chat != -1)
     {
         const oldChatNode = chatsDiv.querySelector(`div[data-id=\"${cur_chat}\"]`);
-        oldChatNode.classList.remove('chat-selected');
+        if (oldChatNode)
+            oldChatNode.classList.remove('chat-selected');
     }
 
     clearChat();
@@ -275,35 +282,35 @@ function setInputEnabled(enabled)
 
 
 // ------------------ Голосовой ввод ------------------
-function startVoiceInput() {
-    if (!('webkitSpeechRecognition' in window && 'SpeechRecognition' in window)) {
-        Swal.fire({
-            title: 'Ой!',
-            text: 'Ваш браузер не поддерживает микрофон',
-            icon: 'error'
-        });
-        return;
-    }
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'ru-RU';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    recognition.start();
+// function startVoiceInput() {
+//     if (!('webkitSpeechRecognition' in window && 'SpeechRecognition' in window)) {
+//         Swal.fire({
+//             title: 'Ой!',
+//             text: 'Ваш браузер не поддерживает микрофон',
+//             icon: 'error'
+//         });
+//         return;
+//     }
+//     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+//     const recognition = new SpeechRecognition();
+//     recognition.lang = 'ru-RU';
+//     recognition.interimResults = false;
+//     recognition.maxAlternatives = 1;
+//     recognition.start();
 
-    recognition.onresult = function(event) {
-        const speechResult = event.results[0][0].transcript;
-        document.getElementById('chat-input').value = speechResult;
-    };
-}
+//     recognition.onresult = function(event) {
+//         const speechResult = event.results[0][0].transcript;
+//         document.getElementById('chat-input').value = speechResult;
+//     };
+// }
 
-// ------------------ Голосовой вывод ------------------
-function speakText(text) {
-    if (!('speechSynthesis' in window)) return;
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'ru-RU';
-    speechSynthesis.speak(utterance);
-}
+// // ------------------ Голосовой вывод ------------------
+// function speakText(text) {
+//     if (!('speechSynthesis' in window)) return;
+//     const utterance = new SpeechSynthesisUtterance(text);
+//     utterance.lang = 'ru-RU';
+//     speechSynthesis.speak(utterance);
+// }
 
 
 
@@ -380,9 +387,9 @@ document.addEventListener("DOMContentLoaded", () =>{
         scrollToEnd();
     };
 
-    document.getElementById('chat-speak-message').addEventListener('click', (e) => {
-        startVoiceInput();
-    });
+    // document.getElementById('chat-speak-message').addEventListener('click', (e) => {
+    //     startVoiceInput();
+    // });
 
     document.getElementById('chats').addEventListener('click', (e) => {
         let target = e.target;

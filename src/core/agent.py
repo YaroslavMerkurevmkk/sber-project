@@ -6,6 +6,7 @@ from core.tools.business_support import BusinessSupport
 from core.tools.digital_maturity import DigitalMaturity
 from core.tools.recomendations import Recommendations
 
+from core.constants import SYSTEM_PROMT
 
 class AsyncChat:
     _model: GigaChat = None
@@ -47,4 +48,4 @@ GlobalAsyncAgent = AsyncAgent([
     BusinessSupport(),
     Recommendations(),
     DigitalMaturity()],
-    "Ты ассистент для бизнеса, твоя задача помогать пользователям")
+    SYSTEM_PROMT)
