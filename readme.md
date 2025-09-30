@@ -1,5 +1,7 @@
 # Sber project
 
+**All commands in description tested on linux (Fedora)**
+
 ## Installation
 Use Python3.11 or later
 
