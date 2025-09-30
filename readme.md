@@ -33,6 +33,8 @@ Create directory `config` and file `config/config.json`
 }
 ```
 
+`data_dir` - Directory with .md files for tools
+
 ### Configure Django
 ```bash
 python src/manage.py migrate
@@ -63,6 +65,7 @@ bin\run_con.bat
 
 ### Clone and install
 Clone repository and [install](#installation)
+Cope data for tools on server
 
 ### Setting MySQL server
 ```sql
