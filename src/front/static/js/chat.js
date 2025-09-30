@@ -2,7 +2,7 @@ const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 const chatSocket = new WebSocket(protocol + window.location.host + '/ws/chat/');
 const md2html = new showdown.Converter();
 
-
+let t_delBtn;
 let chatsDiv;
 let chatDiv;
 let sideDiv;
@@ -12,6 +12,7 @@ let submitBtn;
 //States
 let chats;
 let cur_chat = -1;
+let isInputEnabled = true;
 
 WebSocket.onopen = function()
 {
@@ -44,7 +45,8 @@ chatSocket.onmessage = function(e) {
             }
 
             chats.forEach(chat => {
-                addChat(chat)
+                chat.enabled = true;
+                addChat(chat);
             });
 
             openChat(chats[0].id);
@@ -71,7 +73,9 @@ chatSocket.onmessage = function(e) {
         }
         case 'ai_response': //Create message
         {
-            chats.find((c) => c.id === payload.chat_id).messages.push({
+            let chat = chats.find((c) => c.id === payload.chat_id);
+            chat.enabled = true;
+            chat.messages.push({
                 author: 0,
                 content: payload.content
             });
@@ -85,10 +89,15 @@ chatSocket.onmessage = function(e) {
         }
         case 'new_chat':
         {
+            payload.chat.enabled = true;
             addChat(payload.chat, true);
             chats.push(payload.chat);
             openChat(payload.chat.id);
             break;
+        }
+        case 'deleted_chat':
+        {
+            chatsDiv.childNodes.find(n => n.dataset.id == payload.chat_id).remove();
         }
     }
 };
@@ -152,6 +161,7 @@ function openChat(id)
     clearChat();
 
     const chat = chats.find((c) => c.id === id);
+    setInputEnabled(chat.enabled);
     const chatNode = chatsDiv.querySelector(`div[data-id=\"${id}\"]`);
     chatNode.classList.add('chat-selected');
 
@@ -176,6 +186,12 @@ function addChat(chat, reverse=false)
     el.classList.add('chats-item');
     el.dataset.id = `${chat.id}`;
     el.innerHTML = el.title = `${chat.name}`;
+
+    let delbtn = t_delBtn.cloneNode(true);
+    delbtn.addEventListener("click", onDeleteClick);
+    delbtn.dataset.id = `${chat.id}`;
+
+    el.appendChild(delbtn);
     if (reverse)
         chatsDiv.prepend(el);
     else
@@ -220,10 +236,43 @@ function loadChat(id)
     prependMessages(chat.messages);
 }
 
+function onDeleteClick(e) {
+    let id = e.target.closest(".chats-item").dataset.id;
+    Swal.fire({
+        title: "Удалить чат",
+        text: "Вы уверены?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Удалить',
+        cancelButtonText: "Отмена",
+    }).then(function(result){
+        if(result.isConfirmed)
+            deleteChat(id)
+    });
+}
+
+function deleteChat(id)
+{
+    chatSocket.send(JSON.stringify({
+        type: "command",
+        payload: {
+            action: "delete_chat",
+            "chat_id": id
+        }
+    }));
+}
+
 function scrollToEnd()
 {
     chatDiv.parentNode.scrollTop = chatDiv.parentNode.scrollHeight;
 }
+
+function setInputEnabled(enabled)
+{
+    isInputEnabled = enabled;
+    submitBtn.classList.toggle('submit-disabled', enabled);
+}
+
 
 // ------------------ Голосовой ввод ------------------
 function startVoiceInput() {
@@ -266,6 +315,7 @@ document.addEventListener("DOMContentLoaded", () =>{
     chatDiv = document.getElementById("chat");
     chatNameDiv = document.getElementById("chatname");
     sideDiv = document.querySelector(".sidebar");
+    t_delBtn = document.getElementById("t_dlt-button").content.querySelector(".del-button");
 
     //Events
     document.getElementById('exit-button').addEventListener('click', () => {
@@ -274,9 +324,12 @@ document.addEventListener("DOMContentLoaded", () =>{
             text: "Вы уверены?",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonText: '<a href="/logout">Выход</a>',
+            confirmButtonText: 'Выход',
             cancelButtonText: "Отмена",
-        })
+        }).then(function(result){
+            if(result.isConfirmed)
+                window.location.href = "/logout";
+        });
     });
 
     document.querySelector('.chat-scroll').addEventListener('scroll', () => {
@@ -299,11 +352,14 @@ document.addEventListener("DOMContentLoaded", () =>{
     input.focus();
     input.onkeyup = function(e) {
         if (e.code === "Enter" && !e.shiftKey) {  // enter, return
+            input.value = input.value.slice(0, -1); //Remove enter
             submitBtn.click();
         }
     };
 
     submitBtn.onclick = function(e) {
+        if (!isInputEnabled)
+            return;
         chatSocket.send(JSON.stringify({
             type: "command",
             payload: {
@@ -313,10 +369,13 @@ document.addEventListener("DOMContentLoaded", () =>{
             }
         }));
         const message = {author: 1, content: input.value, id: -1};
-        chats.find((c) => c.id === cur_chat).messages.push(message);
+        
+        let chat = chats.find((c) => c.id === cur_chat);
+        chat.enabled = false;
+        chat.messages.push(message);
         chatDiv.appendChild(formMessage(message));
         input.value = '';
-        submitBtn.disabled = true;
+        setInputEnabled(false);
         input.oninput();
         scrollToEnd();
     };
@@ -339,8 +398,6 @@ document.addEventListener("DOMContentLoaded", () =>{
 
     document.querySelectorAll("textarea").forEach(function(textarea) {
         textarea.style.height = textarea.scrollHeight + "px";
-        // textarea.style.overflowY = "hidden";
-
         
         textarea.oninput = function() {
             this.style.height = "auto";
