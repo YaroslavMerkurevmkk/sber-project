@@ -1,3 +1,4 @@
+import json
 from typing import Any
 
 from django.contrib.auth import get_user_model
@@ -20,6 +21,13 @@ class Chat(models.Model):
             "id": self.id,
             "name": self.name
         }
+
+    @property
+    def to_import(self) -> str:
+        return json.dumps({
+            "name": self.name,
+            "messages": [message.to_ai_message() for message in self.messages.all()]
+        }, ensure_ascii=False, indent=4)
 
     def __iter__(self):
         yield "id", self.id

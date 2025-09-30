@@ -88,4 +88,6 @@ class DatabaseApi:
 
     @staticmethod
     async def delete_chat(user: User, chat_id: int) -> None:
-        await sync_to_async(lambda: Chat.objects.filter(user=user, id=chat_id).delete)()
+        chat = await sync_to_async(Chat.objects.filter(user=user, id=chat_id).first)()
+        if chat:
+            await sync_to_async(chat.delete)()

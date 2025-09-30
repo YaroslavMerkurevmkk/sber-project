@@ -39,6 +39,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 return
 
         except Exception as error:
+            self._logger.exception(f"[{self._tag}] {str(error)}", exc_info=error)
             await self.send(WsMessage(MT.Notification, {
                 "message": str(error),
                 "result": AlertType.Error.value}).to_text_data)
