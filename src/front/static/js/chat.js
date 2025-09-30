@@ -97,7 +97,7 @@ chatSocket.onmessage = function(e) {
         }
         case 'deleted_chat':
         {
-            chatsDiv.childNodes.find(n => n.dataset.id == payload.chat_id).remove();
+            chatsDiv.querySelector(`div[data-id=\"${payload.chat_id}\"]`).remove();
         }
     }
 };
