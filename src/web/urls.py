@@ -7,10 +7,6 @@ import front.views
 
 
 urlpatterns = [
-    path("", front.views.index, name="chat"),
-    path("register/", front.views.register_view, name="register"),
-    path("login/", front.views.login_view, name="login"),
-    path("logout/", front.views.logout_view, name="logout"),
     path('admin/', admin.site.urls),
 ]
 

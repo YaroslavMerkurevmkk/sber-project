@@ -9,16 +9,17 @@ from django.db.models.query import QuerySet
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 
-from .models import Chat, Message
+from .models import User, AgentRequest
 
 
-@admin.register(Chat)
+@admin.register(User)
 class ChatAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "user")
-    actions = ("import_chat",)
+    list_display = ("id", "comment")
+    actions = ("import_requests",)
 
-    @admin.action(description="Import chat(s)")
-    def import_chat(self, request: HttpRequest, queryset: QuerySet[Chat]) -> Optional[HttpResponse]:
+    @admin.action(description="Import request(s)")
+    def import_requests(self, request: HttpRequest, queryset: QuerySet[User]) -> Optional[HttpResponse]:
+        # TODO rewrite later
         if queryset.count() == 0:
             self.message_user(request, "Select one or more chats.", level="error")
             return None
@@ -52,6 +53,6 @@ class ChatAdmin(admin.ModelAdmin):
             os.unlink(zip_filename)
             return response
 
-@admin.register(Message)
+@admin.register(AgentRequest)
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ("id", "chat")
+    list_display = ("id", "user")
