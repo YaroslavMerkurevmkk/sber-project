@@ -7,6 +7,7 @@ import front.views
 
 
 urlpatterns = [
+    path("api/", front.views.agent_request),
     path('admin/', admin.site.urls),
 ]
 

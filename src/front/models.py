@@ -12,6 +12,9 @@ class User(models.Model):
         algorithm="HS256"))
     comment = models.TextField("Comment", null=True)
 
+    def __str__(self):
+        return self.comment[:30]
+
 
 class AgentRequest(models.Model):
     question = models.TextField("Question", null=False)
