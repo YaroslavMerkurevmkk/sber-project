@@ -2,8 +2,8 @@ from langchain_gigachat.chat_models import GigaChat
 from langgraph.prebuilt import create_react_agent
 
 from core.config import GlobalConfig
-
 from core.constants import SYSTEM_PROMT
+
 
 class AsyncChat:
     _model: GigaChat = None
@@ -36,8 +36,8 @@ class AsyncAgent(AsyncChat):
             prompt=self._system_prompt
         )
 
-    async def process_message(self, messages: list) -> str:
-        response = await self.agent.ainvoke({"messages": messages})
+    async def process_request(self, question: str) -> str:
+        response = await self.agent.ainvoke({"messages": [{"role": "user", "content": question}]})
         return response["messages"][-1].content
 
 
