@@ -16,7 +16,7 @@ class AsyncChat:
         return GigaChat(
             credentials=GlobalConfig["token"],
             scope="GIGACHAT_API_PERS",
-            model="GigaChat-Pro",
+            model="GigaChat-Max",
             verify_ssl_certs=False
         )
 

@@ -8,8 +8,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from core.agent import GlobalAsyncAgent
+from core.constants import RequestStatus, Category, SuggestionSubcategory, VALIDATE
 from core.db import DatabaseApi
-from front.models import User
+from front.models import System
 
 logger = getLogger("front")
 
@@ -18,12 +19,8 @@ def get_json(request: ASGIRequest) -> Optional[dict[str, Any]]:
     return json.loads(request.body)
 
 
-VALIDATE = {
-    "agent_request": {"question"}
-}
 
-
-def post(func: Callable[[User, dict[str, Any]], Any]):
+def post(func: Callable[[System, dict[str, Any]], Any]):
     @wraps(func)
     async def wrapper(request: ASGIRequest) -> JsonResponse:
         if request.method != "POST":
@@ -32,7 +29,7 @@ def post(func: Callable[[User, dict[str, Any]], Any]):
             data = get_json(request)
             if "token" not in data:
                 return JsonResponse({"error": "Need token for use API"}, status=400)
-            user = await DatabaseApi.get_user(data["token"])
+            user = await DatabaseApi.get_system(data["token"])
             if not user:
                 return JsonResponse({"error": "Invalid token"}, status=400)
 
@@ -52,8 +49,10 @@ def post(func: Callable[[User, dict[str, Any]], Any]):
 
 @csrf_exempt
 @post
-async def agent_request(user: User, data: dict[str, Any]) -> JsonResponse:
-    question = data["question"]
-    answer = await GlobalAsyncAgent.process_request(question)
-    await DatabaseApi.save_request(question, answer, user)
+async def agent_request(system: System, data: dict[str, Any]) -> JsonResponse:
+    answer = await GlobalAsyncAgent.process_request(data["question"])
+    status = RequestStatus.pending.value
+    category = Category.complaint.value
+    subcategory = SuggestionSubcategory.ecology.value
+    await DatabaseApi.save_request(data, answer, system, status, category, subcategory)
     return JsonResponse({"answer": answer})
