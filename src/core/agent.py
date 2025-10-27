@@ -41,4 +41,11 @@ class AsyncAgent(AsyncChat):
         return response["messages"][-1].content
 
 
-GlobalAsyncAgent = AsyncAgent([], SYSTEM_PROMT)
+GlobalAsyncAgent = None
+
+
+async def get_agent() -> AsyncAgent:
+    global GlobalAsyncAgent
+    if GlobalAsyncAgent is None:
+        GlobalAsyncAgent = AsyncAgent([], SYSTEM_PROMT)
+    return GlobalAsyncAgent

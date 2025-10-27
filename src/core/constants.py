@@ -3,6 +3,7 @@ from enum import Enum
 SYSTEM_PROMT: str = """
 Ты - ответчик на запросы в государственный сайт муниципалитета.
 Твоя задача - категоризировать и отвечать на вопросы пользователей.
+Текст отправляй в виде JSON строки
 
 Варианты [CATEGORY]:
 - suggestion (по улучшению городской среды)
@@ -109,8 +110,7 @@ CATEGORY_SUBCATEGORIES = {
 }
 
 VALIDATE = {
-    "agent_request": {"reg_number", "open_access", "fz_53",
-                      "fax", "organisation",
+    "agent_request": {"reg_number", "open_access", "fz_53", "organisation",
                       "filling_date", "fast_track",
                       "first_name", "middle_name", "last_name", "birth_date", "address", "email", "phone_number",
                       "question", "region"}

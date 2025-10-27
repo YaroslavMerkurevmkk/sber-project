@@ -92,5 +92,7 @@ class AgentRequestAdmin(admin.ModelAdmin):
         'reg_number', 'reg_date_display', 'filling_date_display', 'fast_track',
         'status', 'category', 'subcategory', 'organisation',
         'first_name', 'middle_name', 'last_name', 'birth_date_display',
-        'address', 'email', 'phone_number', 'fax', 'region', 'system'
+        'address', 'email', 'phone_number', 'fact', 'region', 'system'
     ]
+
+    list_filter = ('category', 'subcategory', 'organisation', 'system', 'region')

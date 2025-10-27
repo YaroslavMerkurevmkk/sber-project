@@ -7,8 +7,9 @@ from django.core.handlers.asgi import ASGIRequest
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
-from core.agent import GlobalAsyncAgent
-from core.constants import RequestStatus, Category, SuggestionSubcategory, VALIDATE
+from core.agent import get_agent
+from core.constants import RequestStatus, Category, VALIDATE, CATEGORY_SUBCATEGORIES, \
+    OtherSubcategory
 from core.db import DatabaseApi
 from front.models import System
 
@@ -17,7 +18,6 @@ logger = getLogger("front")
 
 def get_json(request: ASGIRequest) -> Optional[dict[str, Any]]:
     return json.loads(request.body)
-
 
 
 def post(func: Callable[[System, dict[str, Any]], Any]):
@@ -50,9 +50,14 @@ def post(func: Callable[[System, dict[str, Any]], Any]):
 @csrf_exempt
 @post
 async def agent_request(system: System, data: dict[str, Any]) -> JsonResponse:
-    answer = await GlobalAsyncAgent.process_request(data["question"])
+    agent = await get_agent()
+    answer = await agent.process_request(data["question"])
+    category_str, subcategory_str, fact_str = [x.split(":")[-1].strip() for x in
+                                               answer.strip("{}").strip().split("\n")[:3]]
     status = RequestStatus.pending.value
-    category = Category.complaint.value
-    subcategory = SuggestionSubcategory.ecology.value
-    await DatabaseApi.save_request(data, answer, system, status, category, subcategory)
+    category = Category(category_str) if hasattr(Category, category_str) else Category.other
+    subcategory = getattr(CATEGORY_SUBCATEGORIES[category], subcategory_str).value if hasattr(
+        CATEGORY_SUBCATEGORIES[category], subcategory_str) else OtherSubcategory.unclassified.value
+    print(category.value, subcategory)
+    await DatabaseApi.save_request(data, answer, system, status, category.value, subcategory, fact_str)
     return JsonResponse({"answer": answer})

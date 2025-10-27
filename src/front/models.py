@@ -42,7 +42,7 @@ class AgentRequest(models.Model):
     category = models.CharField("Category", max_length=30, choices=CATEGORY_CHOICES)
     subcategory = models.CharField("Subcategory", max_length=30, choices=SUBCATEGORY_CHOICES)
 
-    fax = models.CharField("Fax", max_length=20)
+    fact = models.TextField("Fact")
     organisation = models.CharField("Organisation", max_length=300)
 
     filling_date = models.BigIntegerField("Filling date", default=int(time.time()))

@@ -27,7 +27,8 @@ class DatabaseApi:
                            system: System,
                            status: str,
                            category: str,
-                           subcategory: str) -> None:
+                           subcategory: str,
+                           fact: str) -> None:
 
         data_for_model = {}
         for field in VALIDATE["agent_request"]:
@@ -38,6 +39,7 @@ class DatabaseApi:
         data_for_model["status"] = status
         data_for_model["category"] = category
         data_for_model["subcategory"] = subcategory
+        data_for_model["fact"] = fact
 
         request_obj = AgentRequest(**data_for_model)
         await sync_to_async(request_obj.save)()
