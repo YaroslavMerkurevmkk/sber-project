@@ -33,17 +33,14 @@ Create directory `config` and file `config/config.json`
   "secret_key": "",
   "allowed_hosts": [],
   "csrf_trusted_origins": [],
-  "db_backend": "sqlite3",
+  "db_backend": "mysql",
   "db_host": "localhost",
-  "db_name": "config/db.sqlite3",
+  "db_name": "sber-db",
   "db_port": 3306,
   "db_user": "sber_admin",
-  "db_password": "parol",
-  "data_dir": "data"
+  "db_password": "parol"
 }
 ```
-
-`data_dir` - Directory with .md files for tools
 
 ### Configure Django
 ```bash
@@ -64,6 +61,43 @@ Run `bin\run.bat` file *or*
 bin\run_con.bat
 ```
 
-### Documentation
- - [Commands](docs/commands.md)
- - [Models](docs/models.md)
+### Usage Example
+```python
+import pprint
+import time
+
+import requests
+
+
+def main(question: str, api_url: str, token: str) -> None:
+    data = {
+        "token": token,
+        "reg_number": int(time.time()),
+        "open_access": True,
+        "fz_53": False,
+        "organisation": "ООО Тест",
+        "filling_date": int(time.time()),
+        "fast_track": False,
+        "first_name": "Иван",
+        "middle_name": "Иванович",
+        "last_name": "Иванов",
+        "birth_date": int(time.mktime(time.strptime("1990-01-01", "%Y-%m-%d"))),
+        "address": "г. Москва, ул. Пушкина, д. 1",
+        "email": "ivan.ivanov@example.com",
+        "phone_number": "+74951234567",
+        "question": question,
+        "region": "Москва"
+    }
+
+    resp = requests.post(api_url, json=data)
+    print(resp.status_code)
+
+    if resp.ok:
+        pprint.pp(resp.json())
+    else:
+        print(resp.text)
+
+
+if __name__ == "__main__":
+    main("Some question", "http://127.0.0.1:8000/api/", "your token")
+```
