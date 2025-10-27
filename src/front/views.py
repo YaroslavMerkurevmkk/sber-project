@@ -58,6 +58,5 @@ async def agent_request(system: System, data: dict[str, Any]) -> JsonResponse:
     category = Category(category_str) if hasattr(Category, category_str) else Category.other
     subcategory = getattr(CATEGORY_SUBCATEGORIES[category], subcategory_str).value if hasattr(
         CATEGORY_SUBCATEGORIES[category], subcategory_str) else OtherSubcategory.unclassified.value
-    print(category.value, subcategory)
     await DatabaseApi.save_request(data, answer, system, status, category.value, subcategory, fact_str)
     return JsonResponse({"answer": answer})
